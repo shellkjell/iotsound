@@ -7,9 +7,6 @@ import * as asyncHandler from 'express-async-handler'
 import { constants } from './constants'
 import { restartDevice, rebootDevice, shutdownDevice } from './utils'
 import { getSdk, BalenaSDK } from 'balena-sdk'
-import * as fs from 'fs'
-
-const VERSION = fs.readFileSync('VERSION', 'utf-8')
 
 export default class SoundAPI {
   private api: Application
@@ -40,7 +37,7 @@ export default class SoundAPI {
     }
 
     // balenaSound version
-    this.api.get('/version', (_req, res) => res.send(VERSION) )
+    this.api.get('/version', (_req, res) => res.send(constants.version) )
 
     // Config variables -- update mode
     this.api.post('/mode', (req, res) => {
@@ -73,7 +70,7 @@ export default class SoundAPI {
     // Support endpoint -- Gathers information for troubleshooting
     this.api.get('/support', asyncHandler(async (_req, res) => {
       res.json({
-        version: VERSION,
+        version: constants.version,
         config: this.config,
         audio: await this.audioBlock.getInfo(),
         sinks: stringify(await this.audioBlock.getSinks()),
